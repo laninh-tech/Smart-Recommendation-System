@@ -1,0 +1,5 @@
+{
+  "name": "SmartRec Dashboard",
+  "description": "ML recommendation system: Matrix Factorization & Neural Collaborative Filtering (PyTorch, FastAPI, React).",
+  "version": "2.0.0"
+}

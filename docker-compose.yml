@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  # Backend FastAPI
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: smartrec-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: python -m uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload
+    networks:
+      - smartrec-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/products"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Frontend React + Node Proxy
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: smartrec-frontend
+    ports:
+      - "3001:3001"
+      - "5173:5173"  # Vite dev server
+    volumes:
+      - ./src:/app/src
+      - ./public:/app/public
+    environment:
+      - VITE_API_URL=http://localhost:8000
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - smartrec-network
+    command: npm run dev
+
+networks:
+  smartrec-network:
+    driver: bridge
+
+volumes:
+  backend-data:

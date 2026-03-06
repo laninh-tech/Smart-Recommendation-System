@@ -1,0 +1,22 @@
+# Deep Learning Framework
+# NOTE: Python 3.12 requires newer PyTorch wheels than 2.2.x.
+# Install the latest compatible torch by leaving it unpinned.
+torch
+
+# Web Framework
+fastapi==0.109.0
+uvicorn==0.27.0
+pydantic==2.6.0
+
+# Data Processing
+pandas==2.2.0
+numpy==1.26.3
+scikit-learn==1.4.0
+
+# Utilities
+python-dotenv==1.0.0
+tqdm==4.66.1
+
+# Optional: For better performance
+python-multipart==0.0.6
+aiofiles==23.2.1

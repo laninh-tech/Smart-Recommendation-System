@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+
+# Build & dist
+build/
+dist/
+*.local
+
+# Environment (keep .env.example)
+.env
+.env.local
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+backend/venv/
+venv/
+.venv/
+*.egg-info/
+.eggs/
+
+# IDE & OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Logs & coverage
+*.log
+coverage/
+.nyc_output/
+
+# Optional: uncomment if you don't want to commit large binary checkpoints
+# backend/checkpoints/*.pth
