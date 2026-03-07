@@ -23,7 +23,7 @@ Dưới đây là một số hình ảnh thực tế của hệ thống:
 <br>
 <em>Trực quan hóa độ trễ suy luận, lưu lượng truy cập thực tế và trạng thái mô hình học sâu đang được triển khai (NCF-v2.1).</em>
 <br><br>
-<img src="docs/images/dashboard.png" alt="Dashboard MLOps" width="800"/>
+<img src="docs/images/dashboard.jpg" alt="Dashboard MLOps" width="800"/>
 </details>
 
 <details>
@@ -31,7 +31,7 @@ Dưới đây là một số hình ảnh thực tế của hệ thống:
 <br>
 <em>Giao diện khám phá kho sản phẩm được phân loại theo danh mục.</em>
 <br><br>
-<img src="docs/images/products.png" alt="Product Catalog" width="800"/>
+<img src="docs/images/products.jpg" alt="Product Catalog" width="800"/>
 </details>
 
 <details>
@@ -39,7 +39,7 @@ Dưới đây là một số hình ảnh thực tế của hệ thống:
 <br>
 <em>Trực quan hóa mức độ ưu tiên (Latent Affinity), giải thích logic bằng AI (XAI) và tính năng chuyển đổi A/B Model thời gian thực giữa MF và NCF.</em>
 <br><br>
-<img src="docs/images/recommendations.png" alt="Inference Engine" width="800"/>
+<img src="docs/images/recommendations.jpg" alt="Inference Engine" width="800"/>
 </details>
 
 <details>
@@ -47,7 +47,7 @@ Dưới đây là một số hình ảnh thực tế của hệ thống:
 <br>
 <em>Trình bày các chỉ số kinh doanh ước tính (Business Uplift), biểu đồ độ hội tụ mất mát (BCE Loss Convergence) và kết quả Ranking Top-K.</em>
 <br><br>
-<img src="docs/images/results.png" alt="Performance Metrics" width="800"/>
+<img src="docs/images/results.jpg" alt="Performance Metrics" width="800"/>
 </details>
 
 ---
