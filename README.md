@@ -26,6 +26,18 @@ An end-to-end recommendation platform for ranking, serving, and analyzing person
 - Established a baseline architecture for experiment tracking and model versioning
 - Enabled dashboard-based analysis for recommendation quality and behavior
 
+## Preview
+### Dashboard Overview
+![Smart Recommendation Dashboard](docs/images/dashboard.jpg)
+
+### Recommendation Interface
+![Recommendation Interface](docs/images/recommendations.jpg)
+
+## Project Assets
+- [Dashboard screenshot](docs/images/dashboard.jpg)
+- [Product catalog view](docs/images/products.jpg)
+- [Recommendation results view](docs/images/results.jpg)
+
 ## Installation
 ```bash
 git clone https://github.com/laninh-tech/Smart-Recommendation-System.git
