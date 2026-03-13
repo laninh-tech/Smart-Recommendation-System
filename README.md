@@ -1,48 +1,35 @@
-# SmartRec Intelligence Platform
+# Smart Recommendation System
 
-Production-minded recommendation system with an MLOps workflow, model serving, and analytics dashboard.
+An end-to-end recommendation platform for ranking, serving, and analyzing personalized suggestions.
 
-## Project Objective
-Build an end-to-end recommendation pipeline that can be trained, evaluated, and served in a reproducible way for e-commerce-style ranking use cases.
+## Key Features
+- Deep learning recommendation workflow from training to inference
+- Analytics dashboard for monitoring recommendation behavior
+- MLOps-ready structure for reproducible experimentation
+- Container-friendly deployment workflow
 
 ## Tech Stack
-- Python (training and inference)
-- TypeScript + React (dashboard)
-- Docker and Docker Compose (local orchestration)
-- Data tooling for ETL and feature preparation
+- Data Processing: Python, feature preparation pipeline
+- Modeling: deep learning ranking models
+- Serving: backend inference service
+- Frontend: TypeScript, React dashboard
+- DevOps: Docker, Docker Compose
 
-## Architecture Overview
-- Data preparation and feature engineering module
-- Model training module (candidate ranking models)
-- Inference/API layer for online recommendations
-- Frontend dashboard for monitoring and analysis
+## Methodology
+- Prepare and transform recommendation datasets
+- Train baseline and neural ranking models
+- Expose prediction workflow through an inference layer
+- Analyze recommendation outputs through dashboard views
+
+## Results
+- Built a complete train-to-serve workflow in a single repository
+- Established a baseline architecture for experiment tracking and model versioning
+- Enabled dashboard-based analysis for recommendation quality and behavior
 
 ## Installation
 ```bash
-git clone https://github.com/laninh-tech/smartrec-dashboard.git
-cd smartrec-dashboard
+git clone https://github.com/laninh-tech/Smart-Recommendation-System.git
+cd Smart-Recommendation-System
 npm install
 pip install -r backend/requirements.txt
 ```
-
-## Run
-```bash
-# Option 1: full stack with containers
-docker compose up --build
-
-# Option 2: manual startup
-npm run dev
-```
-
-## Current Results
-- Built a complete train-to-inference workflow in one repository.
-- Added dashboard visibility for recommendation behavior analysis.
-- Established a baseline structure for CI/CD and model versioning.
-
-## Roadmap
-- Add offline metrics dashboard (Recall@K, NDCG@K).
-- Introduce experiment tracking and model registry.
-- Add online A/B evaluation hooks.
-
-## Author
-La Quang Ninh
