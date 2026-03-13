@@ -1,53 +1,48 @@
-# SmartRec Dashboard
+# SmartRec Intelligence Platform
 
-MLOps-oriented recommendation system project with deep learning models and an analytics dashboard for experimentation and serving.
+Production-minded recommendation system with an MLOps workflow, model serving, and analytics dashboard.
 
-## Overview
-SmartRec focuses on building a full recommendation workflow: data preparation, model training, inference service, and visualization layer for monitoring recommendation quality.
+## Project Objective
+Build an end-to-end recommendation pipeline that can be trained, evaluated, and served in a reproducible way for e-commerce-style ranking use cases.
 
-## Core modules
-- Data pipeline for preparing recommendation datasets.
-- Deep learning recommendation models for ranking/prediction.
-- Backend service for inference and API integration.
-- Frontend dashboard for result inspection and analysis.
-- Docker-based local orchestration.
-
-## Tech stack
-- Python (modeling, training, serving)
+## Tech Stack
+- Python (training and inference)
 - TypeScript + React (dashboard)
-- Docker / Docker Compose (environment orchestration)
-- SQL/Data tooling for data processing
+- Docker and Docker Compose (local orchestration)
+- Data tooling for ETL and feature preparation
 
-## Project structure
-```text
-smartrec-dashboard/
-|-- backend/
-|-- src/
-|-- docs/
-|-- Dockerfile
-|-- docker-compose.yml
-|-- server.ts
-|-- package.json
-```
+## Architecture Overview
+- Data preparation and feature engineering module
+- Model training module (candidate ranking models)
+- Inference/API layer for online recommendations
+- Frontend dashboard for monitoring and analysis
 
-## Quick start
+## Installation
 ```bash
 git clone https://github.com/laninh-tech/smartrec-dashboard.git
 cd smartrec-dashboard
 npm install
 pip install -r backend/requirements.txt
-# run app stack (choose one based on your environment)
+```
+
+## Run
+```bash
+# Option 1: full stack with containers
 docker compose up --build
-# or start services manually
+
+# Option 2: manual startup
 npm run dev
 ```
 
-## MLOps direction
-- Version datasets and model artifacts.
-- Add offline/online evaluation dashboards.
-- Automate training and deployment using CI/CD workflows.
-- Introduce A/B testing for recommendation strategies.
+## Current Results
+- Built a complete train-to-inference workflow in one repository.
+- Added dashboard visibility for recommendation behavior analysis.
+- Established a baseline structure for CI/CD and model versioning.
+
+## Roadmap
+- Add offline metrics dashboard (Recall@K, NDCG@K).
+- Introduce experiment tracking and model registry.
+- Add online A/B evaluation hooks.
 
 ## Author
-La Quang Ninh  
-GitHub: https://github.com/laninh-tech
+La Quang Ninh
