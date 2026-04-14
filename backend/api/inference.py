@@ -111,6 +111,15 @@ class RecommendationEngine:
         # Load users
         with open(self.data_dir / "users.json", "r", encoding="utf-8") as f:
             self.users = {u['user_id']: u for u in json.load(f)}
+
+        self.product_interaction_count: dict[str, int] = {}
+        if pd is not None:
+            interactions_path = self.data_dir / "interactions.csv"
+            if interactions_path.exists():
+                df = pd.read_csv(interactions_path, usecols=["product_id"])
+                self.product_interaction_count = (
+                    df["product_id"].value_counts().astype(int).to_dict()
+                )
         
         # Load model
         self.model = self._load_model(model_type)
@@ -192,6 +201,8 @@ class RecommendationEngine:
             # Torch model path
             recommended_idx, scores = self.model.recommend(user_id=user_idx, top_k=top_k)
         
+        user_preferences = set((self.users.get(user_id) or {}).get("preferences", []))
+
         # Convert to product format
         recommendations = []
         for idx, score in zip(recommended_idx, scores):
@@ -201,13 +212,18 @@ class RecommendationEngine:
             product_id = self.idx_to_product[int(idx)]
             product = self.products[product_id]
             
-            # Calculate multi-task scores (simulated for now)
-            # In production, you'd have separate CTR/CVR models
             base_score = float(score)
             # Torch models output roughly rating-scale; baseline outputs 0..1
             score_01 = base_score if isinstance(self.model, BaselineRecommender) else (base_score / 5.0)
-            ctr = min(0.95, max(0.05, score_01 * 0.7 + np.random.random() * 0.2))
-            cvr = min(0.95, max(0.05, score_01 * 0.5 + float(product["rating"]) / 5.0 * 0.3))
+            score_01 = min(1.0, max(0.0, score_01))
+            rating_01 = min(1.0, max(0.0, float(product["rating"]) / 5.0))
+            pref_boost = 0.15 if product.get("category") in user_preferences else 0.0
+
+            # Deterministic proxy scores from model score + rating + preference alignment.
+            ctr = min(0.95, max(0.05, 0.55 * score_01 + 0.25 * rating_01 + pref_boost))
+            cvr = min(0.95, max(0.05, 0.45 * score_01 + 0.40 * rating_01 + pref_boost * 0.5))
+
+            reviews_count = int(self.product_interaction_count.get(product_id, 0))
             
             recommendations.append({
                 'id': product['product_id'],
@@ -217,7 +233,7 @@ class RecommendationEngine:
                 'rating': product['rating'],
                 'image': product['thumbnail'],
                 'brand': product['brand'],
-                'reviews': np.random.randint(50, 500),  # Fake reviews count
+                'reviews': reviews_count,
                 'scores': {
                     'ctr': round(ctr, 3),
                     'cvr': round(cvr, 3),
@@ -257,20 +273,25 @@ class RecommendationEngine:
         
         recommendations = []
         for product in sorted_products:
+            product_id = product['product_id']
+            reviews_count = int(self.product_interaction_count.get(product_id, 0))
+            rating_01 = min(1.0, max(0.0, float(product['rating']) / 5.0))
+            ctr = min(0.95, max(0.05, 0.20 + 0.50 * rating_01))
+            cvr = min(0.95, max(0.05, 0.15 + 0.45 * rating_01))
             recommendations.append({
-                'id': product['product_id'],
+                'id': product_id,
                 'name': product['title'],
                 'category': product['category'],
                 'price': product['price'],
                 'rating': product['rating'],
                 'image': product['thumbnail'],
                 'brand': product['brand'],
-                'reviews': np.random.randint(50, 500),
+                'reviews': reviews_count,
                 'scores': {
-                    'ctr': 0.1,
-                    'cvr': 0.1,
-                    'final': 0.1,
-                    'raw_score': 0.0
+                    'ctr': round(ctr, 3),
+                    'cvr': round(cvr, 3),
+                    'final': round((ctr * 0.6 + cvr * 0.4), 3),
+                    'raw_score': round(rating_01, 3)
                 }
             })
         

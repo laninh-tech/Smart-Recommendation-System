@@ -37,3 +37,36 @@ coverage/
 
 # Optional: uncomment if you don't want to commit large binary checkpoints
 # backend/checkpoints/*.pth
+
+# LaTeX build artifacts
+*.aux
+*.out
+*.log
+*.toc
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.dpth
+*.md5
+*.auxlock
+
+# Temporary files
+*.tmp
+*.temp
+*~
+*.bak
+*.swp
+*.swo
+
+# macOS specific
+.AppleDouble
+.LSOverride
+*.DS_Store
+
+# Optional npm cache
+.npm
+
+# OS generated files
+.directory
+.Spotlight-V100
+.Trashes

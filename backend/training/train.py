@@ -169,6 +169,20 @@ def main():
     test_loader = DataLoader(data['test'], batch_size=BATCH_SIZE, shuffle=False)
     
     results = {}
+
+    # Build history for fair ranking evaluation (exclude train/val seen items only)
+    seen_items_by_user = {}
+    for row in data['train'].interactions[['user_id', 'product_id']].itertuples(index=False):
+        uid = row.user_id
+        pid = row.product_id
+        if pid in data['product_to_idx']:
+            seen_items_by_user.setdefault(uid, set()).add(data['product_to_idx'][pid])
+    for row in data['val'].interactions[['user_id', 'product_id']].itertuples(index=False):
+        uid = row.user_id
+        pid = row.product_id
+        if pid in data['product_to_idx']:
+            seen_items_by_user.setdefault(uid, set()).add(data['product_to_idx'][pid])
+    seen_items_by_user = {uid: sorted(list(items)) for uid, items in seen_items_by_user.items()}
     
     # ========================
     # Train Matrix Factorization
@@ -206,7 +220,8 @@ def main():
     mf_evaluator = RecommendationEvaluator(
         mf_model, data['test'],
         data['user_to_idx'], data['product_to_idx'],
-        data['idx_to_user'], data['idx_to_product']
+        data['idx_to_user'], data['idx_to_product'],
+        seen_items_by_user=seen_items_by_user,
     )
     mf_metrics = mf_evaluator.evaluate_all(k_values=[5, 10, 20])
     results['MF'] = mf_metrics
@@ -250,7 +265,8 @@ def main():
     ncf_evaluator = RecommendationEvaluator(
         ncf_model, data['test'],
         data['user_to_idx'], data['product_to_idx'],
-        data['idx_to_user'], data['idx_to_product']
+        data['idx_to_user'], data['idx_to_product'],
+        seen_items_by_user=seen_items_by_user,
     )
     ncf_metrics = ncf_evaluator.evaluate_all(k_values=[5, 10, 20])
     results['NCF'] = ncf_metrics

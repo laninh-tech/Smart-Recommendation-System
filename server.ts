@@ -33,7 +33,9 @@ async function startServer() {
   app.get('/api/recommendations/:userId', async (req, res) => {
     try {
       const userId = req.params.userId;
-      const response = await fetch(`${BACKEND_URL}/api/recommendations/${userId}`);
+      const query = new URLSearchParams(req.query as Record<string, string>).toString();
+      const url = `${BACKEND_URL}/api/recommendations/${userId}${query ? `?${query}` : ''}`;
+      const response = await fetch(url);
       const data = await response.json();
       res.json(data);
     } catch (error) {

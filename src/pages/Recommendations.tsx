@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Search, User, Loader2, Star, ShoppingCart, MousePointerClick, CreditCard, BrainCircuit, Activity, Zap, Info, ChevronRight, SlidersHorizontal } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 
 export default function RecommendationsPage() {
   const [users, setUsers] = useState<any[]>([]);
@@ -28,29 +28,15 @@ export default function RecommendationsPage() {
 
   const fetchRecommendations = (userId: string, targetModel = activeModel) => {
     setRecommendationsLoading(true);
-    
-    // Simulate real-world inference latency variation based on model complexity
-    const startTime = performance.now();
-    const baseLatency = targetModel === 'NCF' ? 140 : 65; 
-    
-    setTimeout(() => {
-    fetch(`/api/recommendations/${userId}`)
+
+    fetch(`/api/recommendations/${userId}?model=${targetModel.toLowerCase()}`)
       .then(res => res.json())
       .then(data => {
-        // We simulate the A/B test UI response here if the backend doesn't take ?model= param
         const recs = data.recommendations || [];
-        
-        // If MF is chosen, we simulate a slightly less optimal ranking 
-        // by shuffling a bit to visually demonstrate the difference in the UI
-        let finalRecs = [...recs];
-        if (targetModel === 'MF') {
-           finalRecs = finalRecs.sort(() => Math.random() - 0.5).slice(0, 10);
-        }
 
-        // Enhance with XAI features
-        const enhancedRecs = finalRecs.map((r: any) => {
+        const enhancedRecs = recs.map((r: any) => {
            const isMatch = selectedUser?.preferences?.includes(r.category);
-           const latentAffinity = Math.min(99, Math.max(45, (r.scores?.final || 0.5) * 100 + (isMatch ? 15 : -10) + (Math.random() * 5)));
+           const latentAffinity = Math.min(99, Math.max(0, (r.scores?.final || 0) * 100));
            
            let xaiText = isMatch 
             ? `High latent overlap detected in historical ${r.category} interaction sequence.`
@@ -65,14 +51,13 @@ export default function RecommendationsPage() {
         
         setRecommendations(enhancedRecs);
         setInferenceStats({
-            latency: Math.round(baseLatency + (Math.random() * 20)),
-            model: targetModel,
+                    latency: Number(data.latency) || 0,
+                    model: data.model || targetModel,
             targetDim: targetModel === 'NCF' ? 64 : 32
         });
         setRecommendationsLoading(false);
       })
       .catch(() => setRecommendationsLoading(false));
-    }, 100); // UI delay
   };
 
   const handleUserSelect = (user: any) => {

@@ -172,14 +172,15 @@ def mae(predictions, targets):
 class RecommendationEvaluator:
     """Comprehensive evaluator for recommendation models"""
     
-    def __init__(self, model, test_data, user_to_idx, product_to_idx, 
-                 idx_to_user, idx_to_product):
+    def __init__(self, model, test_data, user_to_idx, product_to_idx,
+                 idx_to_user, idx_to_product, seen_items_by_user=None):
         self.model = model
         self.test_data = test_data
         self.user_to_idx = user_to_idx
         self.product_to_idx = product_to_idx
         self.idx_to_user = idx_to_user
         self.idx_to_product = idx_to_product
+        self.seen_items_by_user = seen_items_by_user or {}
     
     def evaluate_ranking(self, k_values=[5, 10, 20]):
         """
@@ -212,9 +213,9 @@ class RecommendationEvaluator:
         for user_id in user_relevant_items.keys():
             user_idx = self.user_to_idx[user_id]
             
-            # Get items user has already interacted with (to exclude)
-            interacted = test_df[test_df['user_id'] == user_id]['product_id'].tolist()
-            interacted_idx = [self.product_to_idx[pid] for pid in interacted]
+            # Exclude only historical interactions from train/val.
+            # Do not exclude test targets to avoid collapsing ranking metrics.
+            interacted_idx = self.seen_items_by_user.get(user_id, [])
             
             # Generate recommendations
             recommended, _ = self.model.recommend(

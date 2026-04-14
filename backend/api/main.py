@@ -9,7 +9,7 @@ import sys
 import time
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
@@ -39,20 +39,24 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Initialize recommendation engine (lazy-loaded)
-engine = None
+# Initialize recommendation engines (lazy-loaded, keyed by model type)
+engines = {}
 
-def get_engine():
-    """Lazy-load recommendation engine (NCF by default)."""
-    global engine
-    if engine is None:
-        print("Loading Recommendation Engine...")
-        engine = RecommendationEngine(
+def get_engine(model_type: str | None = None):
+    """Lazy-load recommendation engine by model type."""
+    normalized = (model_type or DEFAULT_MODEL_TYPE).lower()
+    if normalized not in {"baseline", "mf", "ncf"}:
+        raise HTTPException(status_code=400, detail=f"Unsupported model: {model_type}")
+
+    if normalized not in engines:
+        print(f"Loading Recommendation Engine ({normalized})...")
+        engines[normalized] = RecommendationEngine(
             checkpoint_dir=str(CHECKPOINT_DIR),
-            model_type=DEFAULT_MODEL_TYPE,
+            model_type=normalized,
         )
-        print("✓ Engine loaded!")
-    return engine
+        print(f"✓ Engine loaded ({normalized})")
+
+    return engines[normalized]
 
 
 # === API Endpoints ===
@@ -92,7 +96,11 @@ async def get_products():
 
 
 @app.get("/api/recommendations/{user_id}")
-async def get_recommendations(user_id: str, top_k: int = 12):
+async def get_recommendations(
+    user_id: str,
+    top_k: int = Query(default=12, ge=1, le=100),
+    model: str | None = Query(default=None),
+):
     """
     Get personalized recommendations for a user
     
@@ -104,11 +112,11 @@ async def get_recommendations(user_id: str, top_k: int = 12):
         JSON with recommendations and latency metrics
     """
     try:
-        engine = get_engine()
+        engine = get_engine(model)
         start_time = time.time()
         result = engine.get_recommendations(user_id, top_k=top_k)
-        latency = (time.time() - start_time) * 1000  # Convert to ms
-        result['latency'] = f"{latency:.0f}ms"
+        latency = int((time.time() - start_time) * 1000)
+        result['latency'] = latency
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error generating recommendations: {str(e)}")
